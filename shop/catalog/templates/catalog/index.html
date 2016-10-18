@@ -1,0 +1,15 @@
+{% extends "catalog/base.html" %}
+
+{% block title %}Catalog{% endblock %}
+
+{% block content %}
+{% if items %}
+	<ul>
+	{% for item in items %}
+		<li><a href="{% url 'catalog:item' item.id %}">{{ item.name }}</a></li>
+	{% endfor %}
+	</ul>
+{% else %}
+	<p>No items are available</p>
+{% endif %}
+{% endblock %}
