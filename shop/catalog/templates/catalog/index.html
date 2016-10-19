@@ -1,13 +1,15 @@
 {% extends "catalog/base.html" %}
 
 {% block title %}Catalog{% endblock %}
-
+{% load custom_tags %}
 {% block content %}
 {% if items %}
 	<ul>
-	{% for item in items %}
-		<li><a href="{% url 'catalog:item' item.id %}">{{ item.name }}</a></li>
+	{% with ilist=items|slice:"0" %}
+	{% for item in ilist  %}
+			<li><a href="{% url 'catalog:item' item.id %}">{{ item.name }}</a></li>	
 	{% endfor %}
+	{% endwith %}
 	</ul>
 {% else %}
 	<p>No items are available</p>
