@@ -6,7 +6,26 @@
 
 <h3>{{ item.name }}</h3>
 
+{{ item.price }} {{ item.currency.ticker }}<br>
+
+Average rating: {{ avg_rating }}
+
 <p>{{ item.description }}</p>
+
+<h3>Accessories</h3>
+{% if not item.accessories.count %}
+	<p>No accessories for this item</p>
+{% else %}
+	<ul>
+	{% for ac in item.accessories.all %}
+		<li>{{ ac.name }}: {{ ac.price }} {{ ac.currency.ticker }}</li>
+	{% endfor %}
+	</ul>
+	<b>Total:</b><br>
+	{% for p in accessories_prices %}
+		 {{ p }}<br>
+	{% endfor %}
+{% endif %}
 
 <h3>Reviews:</h3>
 {% if not reviews %}
@@ -16,7 +35,7 @@
 		<hr>
 		<p>
 			<b>{{ review.name }}</b><br>
-			{{ review.date }}<br>
+			{{ review.created }}<br>
 			Rating: {{ review.rating }}<br>			
 			{{ review.text }}
 		</p>
@@ -25,16 +44,8 @@
 
 <h3>{{ rtitle }}</h3>
 <form action='' method="post">
-{% csrf_token %}
-	Name: <input type="text" name="name"/><br>
-	Rating: 
-		<input type="radio" name="rating" value='1' />1
-		<input type="radio" name="rating" value='2' />2
-		<input type="radio" name="rating" value='3' />3
-		<input type="radio" name="rating" value='4' />4
-		<input type="radio" name="rating" value='5' />5
-	<br>
-	<textarea rows='10' cols='40' name='text'></textarea><br>
+	{% csrf_token %}
+	{{ review_form.as_p }}
 	<input type="submit" value="Add review">
 </form>
 

@@ -1,0 +1,21 @@
+.left{
+	margin: 5px;
+	padding: 5px;
+	padding-right: 15px;
+	background-color: #fff;
+	border-style: solid;
+	border-width: 1px;
+	border-radius: 5px;
+	float: left;
+}
+
+.right{
+	margin: 5px;
+	padding: 5px;
+	padding-right: 15px;
+	background-color: #dfd;
+	border-style: solid;
+	border-width: 1px;
+	border-radius: 5px;
+	float: left;
+}
