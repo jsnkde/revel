@@ -2,6 +2,8 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from  django.contrib.auth.base_user import AbstractBaseUser
+from django.core.mail import send_mail
 
 class AbstractClass(models.Model):
 	created = models.DateTimeField(auto_now_add=True)
@@ -59,3 +61,6 @@ class Replacement(ValueItem):
 class ReplacementCatalog(models.Model):
 	item = models.ForeignKey(Item, on_delete=models.CASCADE)
 	replacement = models.ForeignKey(Replacement, on_delete=models.CASCADE)	
+
+class CustomUser(AbstractBaseUser):
+	rank = models.CharField(max_length=100)

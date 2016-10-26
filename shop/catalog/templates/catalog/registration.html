@@ -1,0 +1,13 @@
+{% extends "catalog/base.html" %}
+
+{% block title %} Login {% endblock %}
+
+{% block content %}
+
+<form action='' method="post">
+	{% csrf_token %}
+	{{ regform.as_p }}
+	<input type="submit" value="Register" onclick="validateForm()">
+</form>
+
+{% endblock %}

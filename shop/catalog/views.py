@@ -8,10 +8,16 @@ from django.urls import reverse
 from django.views import generic
 from django.template import RequestContext
 from django.db.models import Avg, Sum
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail
+from django.core.mail import EmailMessage
+from django.contrib.auth.models import User
 
 from .models import Item, Review, Accessory, Currency
-from .forms import ReviewForm
+from .forms import ReviewForm, SigninForm, SignupForm
 
+@login_required
 def index(request):
 	items = Item.objects.all()
 	template = loader.get_template('catalog/index.html')
@@ -53,8 +59,55 @@ def item(request, item_id):
 
 		return render(request, 'catalog/item.html', {'item': item, 'reviews': reviews, 'accessories_prices': accessories_prices, 'review_form': review_form, 'avg_rating': avg_rating, })
 
+def signin(request):
+	if request.method == 'POST':
+		lform = SigninForm(request.POST)
+		if lform.is_valid():
+			user = authenticate(username=lform.cleaned_data['name'], password=lform.cleaned_data['password'])
+			if user is not None:
+				login(request, user)
+
+		return HttpResponseRedirect(reverse('catalog:index'))
+
+	else:
+		lform = SigninForm()
+
+		return render(request, 'catalog/login.html', {'lform': lform, })
+
+def signout(request):
+	logout(request)
+	return HttpResponseRedirect(reverse('catalog:signin'))
+
 class DetailView(generic.DetailView):
 	model = Item
 	template_name='catalog/item.html'
+
+def profile(request, user_id):
+	user = get_object_or_404(User, pk=user_id)
+	return render(request, 'catalog/profile.html', {'user': user,})
+
+def register(request):
+	if request.method == 'POST':
+		regform = SignupForm(request.POST)
+		
+		if regform.is_valid():
+			username = regform.cleaned_data['username']
+			first_name = regform.cleaned_data['first_name']
+			last_name = regform.cleaned_data['last_name']
+			email = regform.cleaned_data['email']
+			password = regform.cleaned_data['password']
+			
+			User(username=username, first_name=first_name, last_name=last_name, email=email, password=password).save()
+			send_mail('Successful Registration', 'You are successfuly registered in our internet shop.', 'jsnk@yandex.ru', [email,], fail_silently=False)
+
+			return HttpResponseRedirect(reverse('catalog:index'))
+
+		else:
+			return render(request, 'catalog/registration.html', {'regform': regform,})
+
+	else:
+		regform = SignupForm()
+		return render(request, 'catalog/registration.html', {'regform': regform,})
+
 
 
