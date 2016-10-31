@@ -64,3 +64,10 @@ class ReplacementCatalog(models.Model):
 
 class CustomUser(AbstractBaseUser):
 	rank = models.CharField(max_length=100)
+
+
+class B(models.Model):
+	name = models.CharField(max_length=10)
+
+class A(B):
+	state = models.CharField(max_length=10)
