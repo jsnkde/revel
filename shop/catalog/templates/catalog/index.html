@@ -1,0 +1,28 @@
+{% extends "catalog/base.html" %}
+
+{% block title %}Catalog{% endblock %}
+{% load custom_tags %}
+
+{% block content %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'catalog/css/style.css' %}" />
+
+<div class="parent">
+<div class="left">
+	<ul>
+	{% with ilist=items|slice:"0" %}
+	{% for item in ilist  %}
+			<li><a href="{% url 'catalog:item' item.id %}">{{ item.name }}</a>: {{ item.price }} {{ item.currency.ticker }}</li>	
+	{% endfor %}
+	{% endwith %}
+	</ul>
+</div>
+{% if items %}
+<div class="right">
+	
+</div>
+</div>
+{% else %}
+	<p>No items are available</p>
+{% endif %}
+{% endblock %}

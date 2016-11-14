@@ -1,0 +1,52 @@
+{% extends "catalog/base.html" %}
+
+{% block title %} {{ item.name }} {% endblock %}
+
+{% block content %}
+
+<h3>{{ item.name }}</h3>
+
+{{ item.price }} {{ item.currency.ticker }}<br>
+
+Average rating: {{ avg_rating }}
+
+<p>{{ item.description }}</p>
+
+<h3>Accessories</h3>
+{% if not item.accessories.count %}
+	<p>No accessories for this item</p>
+{% else %}
+	<ul>
+	{% for ac in item.accessories.all %}
+		<li>{{ ac.name }}: {{ ac.price }} {{ ac.currency.ticker }}</li>
+	{% endfor %}
+	</ul>
+	<b>Total:</b><br>
+	{% for p in accessories_prices %}
+		 {{ p }}<br>
+	{% endfor %}
+{% endif %}
+
+<h3>Reviews:</h3>
+{% if not reviews %}
+	<p>No reviews for this items</p>
+{% else %}
+	{% for review in reviews %}
+		<hr>
+		<p>
+			<b>{{ review.name }}</b><br>
+			{{ review.created }}<br>
+			Rating: {{ review.rating }}<br>			
+			{{ review.text }}
+		</p>
+	{% endfor %}
+{% endif %}
+
+<h3>{{ rtitle }}</h3>
+<form action='' method="post">
+	{% csrf_token %}
+	{{ review_form.as_p }}
+	<input type="submit" value="Add review">
+</form>
+
+{% endblock %}
