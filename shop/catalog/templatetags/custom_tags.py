@@ -14,11 +14,15 @@ def slice(value, argstr):
 	end = None
 	step = 1
 
-	if len(args) > 0: 
-		start = int(args[0]) 
-	if len(args) > 1: 
-		end = int(args[1])
-	if len(args) > 2: 
-		step = int(args[2]) 
+	try:
+		if len(args) > 0: 
+			start = int(args[0]) 
+		if len(args) > 1: 
+			end = int(args[1])
+		if len(args) > 2: 
+			step = int(args[2]) 
+
+	except ValueError:
+		pass
 
 	return value[start:end:step]

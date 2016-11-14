@@ -18,11 +18,26 @@ from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls.static import static
 from django.conf import settings
+from tastypie.api import Api
+from catalog.api.resources import ItemResource, ReviewResource, UserResource
+from rest_framework_swagger.views import get_swagger_view
+
+schema_view = get_swagger_view(title='Pastebin API')
+
+v1_api = Api(api_name='v1')
+v1_api.register(ItemResource())
+v1_api.register(ReviewResource())
+v1_api.register(UserResource())
 
 urlpatterns = [
+    url(r'^doc/$', schema_view),
 	url(r'^', include('catalog.urls')),
     url(r'^admin/', admin.site.urls),
+    #url(r'^grappelli/', include('grappelli.urls')), # grappelli URLS
+    url(r'^api/', include(v1_api.urls)),
 ]
+
+
 
 urlpatterns += staticfiles_urlpatterns()
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
