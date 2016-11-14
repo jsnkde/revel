@@ -166,7 +166,7 @@ class CartView(View):
 			order.save()
 			del request.session['order']
 
-			return render(request, 'catalog/cart.html', {'order': None})
+			return redirect(reverse('catalog:index'))
 
 		if request.GET.has_key('delete'):
 			try:

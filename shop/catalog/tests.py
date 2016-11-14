@@ -26,9 +26,6 @@ class AccessTest(TestCase):
 		response = self.client.get('/user/%d' % self.user.id)
 		self.assertEqual(response.status_code, 200)
 
-		response = self.client.get('/user?id=%d' % self.user.id)
-		self.assertEqual(response.status_code, 200)
-
 	def test_register(self):
 		self.client.logout()
 		response = self.client.post('/register', {'username': 'user2', 'password': 'pass', 'email': 'jdoe@gmail.com'})
