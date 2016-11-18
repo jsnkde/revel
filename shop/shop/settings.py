@@ -34,7 +34,7 @@ INSTALLED_APPS = [
     #'grappelli',
     #'rest_framework_swagger',
     'tastypie',
-    #'tastypie-swagger',
+    'tastypie_swagger',
     'catalog.apps.CatalogConfig',
     'django.contrib.admin',
     'django.contrib.auth',

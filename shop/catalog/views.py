@@ -17,6 +17,8 @@ from django.contrib.auth.models import User
 from .models import Item, Review, Accessory, Currency, A, B, Order, OrderItem
 from .forms import ReviewForm, SigninForm, SignupForm
 from django.conf.urls import url
+from django.db import connection
+from datetime import date, timedelta
 
 
 class ItemDisplay(generic.DetailView):
@@ -38,7 +40,6 @@ class ItemDisplay(generic.DetailView):
 			oitem.save()
 			order.items.add(oitem)
 			order.save()
-
 
 		return super(ItemDisplay, self).get(request, *args, **kwargs)
 
@@ -67,21 +68,20 @@ class ItemDisplay(generic.DetailView):
 		return context
 
 
-class ReviewView(generic.detail.SingleObjectMixin, generic.FormView):
+class ReviewView(generic.FormView):
 	template_name = 'catalog/item.html'
 	form_class = ReviewForm
-	model = Review
 
 	def post(self, request, *args, **kwargs):
 		form = self.get_form()
 		if form.is_valid():
-			review = Review(name=form.cleaned_data['name'], rating=form.cleaned_data['rating'], text=form.cleaned_data['text'], item=Item.objects.get(id=kwargs['pk']))
+			self.iid = kwargs['pk']
+			review = Review(name=form.cleaned_data['name'], rating=form.cleaned_data['rating'], text=form.cleaned_data['text'], item=Item.objects.get(id=self.iid))
 			review.save()
-			self.object = review
 		return super(ReviewView, self).post(request, *args, **kwargs)
 
 	def get_success_url(self):
-		return reverse('catalog:detail', kwargs={'pk': self.object.item_id})
+		return reverse('catalog:detail', kwargs={'pk': self.iid})
 
 
 class ItemDetail(View):
@@ -180,3 +180,38 @@ class CartView(View):
 				del request.session['order']
 
 		return render(request, 'catalog/cart.html', {'order': order})
+
+
+class OrderView(View):
+	def get(self, request):
+		# Default parameters
+		begin = str(date.today() - timedelta(days=1))
+		end = str(date.today())
+		step = 1
+
+		if request.GET.has_key('begin'):
+			begin = request.GET['begin']
+
+		if request.GET.has_key('end'):
+			end = request.GET['end']
+
+		try:
+			if request.GET.has_key('step'):
+				step = int(request.GET['step'])
+
+		except ValueError:
+			pass
+
+		try:
+			cur = connection.cursor()
+			cur.callproc('get_orders', [begin, end, step])
+			orders = cur.fetchall()
+			cur.close()
+
+		except:
+			orders = []
+
+		return render(request, 'catalog/orders.html', {'orders': orders, 'begin': begin, 'end': end, 'step': step})
+
+
+

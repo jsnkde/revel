@@ -20,9 +20,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 from tastypie.api import Api
 from catalog.api.resources import ItemResource, ReviewResource, UserResource
-from rest_framework_swagger.views import get_swagger_view
 
-schema_view = get_swagger_view(title='Pastebin API')
 
 v1_api = Api(api_name='v1')
 v1_api.register(ItemResource())
@@ -30,11 +28,15 @@ v1_api.register(ReviewResource())
 v1_api.register(UserResource())
 
 urlpatterns = [
-    url(r'^doc/$', schema_view),
 	url(r'^', include('catalog.urls')),
     url(r'^admin/', admin.site.urls),
     #url(r'^grappelli/', include('grappelli.urls')), # grappelli URLS
     url(r'^api/', include(v1_api.urls)),
+    url(r'api/doc/', include('tastypie_swagger.urls', namespace='myapi_tastypie_swagger'),
+        kwargs={
+          "tastypie_api_module":v1_api,
+          "namespace":"myapi_tastypie_swagger",
+          "version": "0.1"}),
 ]
 
 

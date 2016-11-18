@@ -6,7 +6,7 @@ import re
 
 
 class ReviewForm(forms.ModelForm):
-	RATING = ((1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5'),)
+	#RATING = ((1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5'),)
 
 	#name = forms.CharField(max_length=100, required=False)
 	#rating = forms.ChoiceField(choices=RATING)
@@ -15,6 +15,14 @@ class ReviewForm(forms.ModelForm):
 	class Meta:
 		model = Review
 		fields = ['name', 'rating', 'text']
+
+	def clean_rating(self):
+		rating = self.cleaned_data['rating']
+
+		if rating < 1 or rating > 11:
+			raise forms.ValidationError(u'Rating should be between 0 and 10 (or 11 if you are really stunned).')
+
+		return rating
 
 
 class SigninForm(forms.Form):
