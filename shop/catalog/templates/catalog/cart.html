@@ -1,0 +1,19 @@
+{% extends "catalog/base.html" %}
+
+{% block title %} Your cart {% endblock %}
+
+{% block content %}
+
+{% if not order %}
+<p>No items in your cart</p>
+{% else %}
+
+{% for order_item in order.items.all %}
+	{{ order_item.item.name }}: {{ order_item.item.price }} {{ order_item.item.currency.ticker }} <a href="?delete={{ order_item.id }}">Delete</a> <br> 
+{% endfor %}
+
+<a href='?close'>Pay and close</a><br>
+
+{% endif %}
+
+{% endblock %}

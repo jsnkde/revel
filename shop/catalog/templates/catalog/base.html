@@ -7,6 +7,15 @@
 <body>
 <h2><a href='/'>Internet Shop</a></h2>
 <h4>Full URL: <b>{{ request.full_host }}</b></h4>
+<div>
+	{% if request.user.is_anonymous %}
+		<a href="/login">Sign in</a>
+		<a href="/register">Register</a>
+	{% else %}
+		<a href="{% url 'catalog:profile' request.user.id %}">{{ request.user }}</a>
+		<a href="/logout">Sign out</a>
+	{% endif %}
+</div>
 {% block content %} {% endblock %}
 </body>
 </html>

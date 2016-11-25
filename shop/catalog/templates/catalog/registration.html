@@ -6,8 +6,8 @@
 
 <form action='' method="post">
 	{% csrf_token %}
-	{{ regform.as_p }}
-	<input type="submit" value="Register" onclick="validateForm()">
+	{{ form.as_p }}
+	<input type="submit" value="Register" />
 </form>
 
 {% endblock %}

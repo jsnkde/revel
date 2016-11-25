@@ -12,7 +12,7 @@
 	<ul>
 	{% with ilist=items|slice:"0" %}
 	{% for item in ilist  %}
-			<li><a href="{% url 'catalog:item' item.id %}">{{ item.name }}</a>: {{ item.price }} {{ item.currency.ticker }}</li>	
+			<li><a href="{% url 'catalog:detail' item.id %}">{{ item.name }}</a>: {{ item.price }} {{ item.currency.ticker }}</li>	
 	{% endfor %}
 	{% endwith %}
 	</ul>

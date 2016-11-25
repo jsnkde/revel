@@ -1,15 +1,17 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
+from django.contrib.auth.decorators import login_required
 
 from . import views
 
 app_name = 'catalog'
 
 urlpatterns = [
-    url(r'^$', views.index, name='index'),
-    url(r'^login$', views.signin, name='signin'),
-    url(r'^logout$', views.signout, name='signout'),
-    url(r'^user/(?P<user_id>[0-9]+)/$', views.profile, name='profile'),
-    url(r'^register$', views.register, name='register'),
-    url(r'^(?P<item_id>[0-9]+)/$', views.item, name='item'),
-    url(r'^(?P<pk>[0-9]+)/details/$', views.DetailView.as_view(), name='detail'),
+    url(r'^$', views.ItemList.as_view(), name='index'),
+    url(r'^login$', views.SigninView.as_view(), name='signin'),
+    url(r'^logout$', views.SignoutView.as_view(), name='signout'),
+    url(r'^user/(?P<pk>[0-9]+)$', views.ProfileView.as_view(), name='profile'),
+    url(r'^register$', views.Registration.as_view(), name='register'),
+    url(r'^item/(?P<pk>[0-9]+)$', login_required(views.ItemDetail.as_view()), name='detail'),
+	url(r'^cart$', views.CartView.as_view(), name='cart'),   
+	url(r'^orders$', views.OrderView.as_view(), name='orders'), 
 ]

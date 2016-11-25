@@ -5,6 +5,13 @@
 {% block content %}
 
 <h3>{{ item.name }}</h3>
+{% if not reques.user.is_anonoymous %}
+	<a href="?add=true">Add to cart</a><br>
+{% endif %}
+
+{% if cart %}
+	<a href="{% url 'catalog:cart' %}">My cart</a><br>
+{% endif %}
 
 {{ item.price }} {{ item.currency.ticker }}<br>
 
@@ -42,11 +49,13 @@ Average rating: {{ avg_rating }}
 	{% endfor %}
 {% endif %}
 
+{% if not request.user.is_anonymous %}
 <h3>{{ rtitle }}</h3>
 <form action='' method="post">
 	{% csrf_token %}
-	{{ review_form.as_p }}
+	{{ form.as_p }}
 	<input type="submit" value="Add review">
 </form>
+{% endif %}
 
 {% endblock %}

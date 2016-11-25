@@ -1,0 +1,19 @@
+{% extends "catalog/base.html" %}
+
+{% block title %}Catalog{% endblock %}
+{% load custom_tags %}
+
+{% block content %}
+
+Begin date: {{ begin }}<br>
+End date: {{ end }}<br>
+Step: {{ step }}<br>
+
+<ul>
+{% for order in orders %}
+<li>
+	{{ order.0 }} USD
+</li>
+{% endfor %}
+</ul>
+{% endblock %}
