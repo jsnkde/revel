@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Revel</title>
+        {% load static %}
+        {% load i18n %}
+        {% load staticfiles %}
+        <link rel="stylesheet" href="{% static 'catalog/css/style.css' %}" />
+        <link rel="stylesheet" href="{% static 'catalog/css/bootstrap.css' %}" />
+
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    </head>
+    <body>
+        <script id="loginTemplate" type="text/template">
+            <div id='login' class="container-fluid">
+                <h2>Who are you?</h2>
+                <input type='text' id='uname'><br>
+                <input type='password' id='pword'><br>
+                <button id='submit'>Log in</button>
+            </div>
+        </script>
+
+        <script id="submitTemplate" type="text/template">
+            <div id='collection' class="container-fluid">
+            <h3>hello, <%= suname %></h3>
+            Key: <span id='skey'><%= skey %></span>
+            <table class='table'>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+            <% _.each(collection, function(model) { %>
+                <tr>
+                    <th><%= model.name %></th>
+                    <th><%= model.price %> USD</th>
+                </tr>
+                <tr>
+                    <th colspan="2">
+                    <table class="table">
+                        <% _.each(model.reviews, function(review) { %>
+                        <tr>
+                            <th>Author</th><th> <%= review.name %></th>
+                        </tr><tr>
+                            <th>Date</th><th> <%= review.date %></th>
+                        </tr><tr>
+                            <th>Rating</th><th> <%= review.rating %></th>
+                        </tr><tr>
+                            <th>Text</th><th> <%= review.text %></th>                   
+                        </tr>
+                        <tr><th colspan="2"><hr></th></tr>
+                        <% }); %>
+                    </table>
+                    </th>
+                </tr>
+            <% }); %>
+            </tbody>
+            </table>
+            </div>
+        </script>
+
+        <div id="container"></div>
+
+        <script type="text/javascript" src="{% static 'catalog/js/jquery.js' %}"></script>
+        <script type="text/javascript" src="{% static 'catalog/js/bootstrap.js' %}"></script>
+        <script type="text/javascript" src="{% static 'catalog/js/underscore.js' %}"></script>
+        <script type="text/javascript" src="{% static 'catalog/js/backbone.js' %}"></script>
+        <script type="text/javascript" src="{% static 'catalog/js/js_cookie.js' %}"></script>
+        <script type="text/javascript" src="{% static 'catalog/js/backbone_tastypie.js' %}"></script>
+        <script type="text/javascript" src="{% static 'catalog/js/models.js' %}"></script>
+        <script type="text/javascript" src="{% static 'catalog/js/views.js' %}"></script>
+        <script type="text/javascript" src="{% static 'catalog/js/router.js' %}"></script>
+    </body>
+</html>
