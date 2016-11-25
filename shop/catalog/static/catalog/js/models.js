@@ -1,10 +1,18 @@
 var BaseModel = Backbone.Model.extend({
 });
 
-
 var UserModel = BaseModel.extend({
     urlRoot: '/api/v1/user/',
     defaults: {
+    }
+}); 
+
+var CreateUserModel = BaseModel.extend({
+    urlRoot: '/api/v1/create_user/',
+    defaults: {
+    	'username': '',
+    	'email': '',
+    	'password': ''
     }
 }); 
 

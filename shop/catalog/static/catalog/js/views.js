@@ -1,8 +1,6 @@
 var notificationService = {};
 _.extend(notificationService, Backbone.Events);
 
-Backbone.Tastypie.apiKey = {};
-
 var LoginView = Backbone.View.extend({
 	el: $("#container"),
 
@@ -58,11 +56,11 @@ var ItemView = Backbone.View.extend({
         }; 
 		this.collection.fetch({
 			success: function(collection, response, options) {
-                console.log('success');
+                console.log('item fetch success');
                 self.fetchSuccess(collection, response, options);                
             },
             error: function(collection, response, options) {
-                console.log('failure');
+                console.log('item fetch failure');
             }
 		});
 				
@@ -76,5 +74,46 @@ var ItemView = Backbone.View.extend({
     },
 });
 
+var RegisterView = Backbone.View.extend({
+	el: $("#container"),
+
+	model: new CreateUserModel(),
+
+	template: _.template($('#registerTemplate').html()),
+
+	render: function(){
+		$(this.el).html(this.template());
+	},
+
+	events:{
+		"click #reg": "reg"
+	},
+
+	reg: function(){
+		var data = {
+			username: $("#usname").val(),
+			email: $("#email").val(),
+			password: $("#psword").val(),
+		};
+
+		this.model.save(data, 
+			{ 
+				dataType: 'text',
+				validate: true,
+
+				success: function(response){
+					console.log("CreateUser success");
+					controller.navigate("", true);
+				},
+				error: function(response){
+					console.log("CreateUser error");
+					$("#register-error").text("Registration failed.");
+				}
+			});
+	}
+
+});
+
 lview = new LoginView();
 iview = new ItemView();
+rview = new RegisterView();

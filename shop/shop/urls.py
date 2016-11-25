@@ -19,13 +19,14 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls.static import static
 from django.conf import settings
 from tastypie.api import Api
-from catalog.api.resources import ItemResource, ReviewResource, UserResource
+from catalog.api.resources import ItemResource, ReviewResource, UserResource, CreateUserResource
 
 
 v1_api = Api(api_name='v1')
 v1_api.register(ItemResource())
 v1_api.register(ReviewResource())
 v1_api.register(UserResource())
+v1_api.register(CreateUserResource())
 
 urlpatterns = [
 	url(r'^', include('catalog.urls')),

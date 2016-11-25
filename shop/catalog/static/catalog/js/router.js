@@ -2,6 +2,7 @@ var Controller = Backbone.Router.extend({
 	routes: {
 		"": "login",
 		"items": "items",
+		"reg": "reg"
 	},
 
 	login: function(){
@@ -13,6 +14,12 @@ var Controller = Backbone.Router.extend({
 	items: function(){
 		if(iview != null){
 			iview.render();
+		}
+	},
+
+	reg: function(){
+		if(rview != null){
+			rview.render();
 		}
 	}
 });
