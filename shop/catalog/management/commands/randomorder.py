@@ -15,10 +15,10 @@ class Command(BaseCommand):
 		users = User.objects.all()
 		items = Item.objects.all()
 
-		if users.count() == 0:
+		if not users.exists():
 			raise Exception('No users exist')
 
-		if items.count() == 0:
+		if not items.exists():
 			raise Exception('No items exist')
 
 		user = users[random.randint(0, users.count() - 1)]

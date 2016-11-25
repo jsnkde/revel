@@ -13,12 +13,17 @@ from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.core.mail import EmailMessage
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 
 from .models import Item, Review, Accessory, Currency, A, B, Order, OrderItem
 from .forms import ReviewForm, SigninForm, SignupForm
 from django.conf.urls import url
-from django.db import connection
+from django.db import connection, DatabaseError
 from datetime import date, timedelta
+
+
+class JSView(generic.TemplateView):
+	template_name = 'catalog/js_index.html'
 
 
 class ItemDisplay(generic.DetailView):
@@ -68,20 +73,18 @@ class ItemDisplay(generic.DetailView):
 		return context
 
 
-class ReviewView(generic.FormView):
+class ReviewView(generic.edit.CreateView):
 	template_name = 'catalog/item.html'
+	model = Review
 	form_class = ReviewForm
 
-	def post(self, request, *args, **kwargs):
-		form = self.get_form()
-		if form.is_valid():
-			self.iid = kwargs['pk']
-			review = Review(name=form.cleaned_data['name'], rating=form.cleaned_data['rating'], text=form.cleaned_data['text'], item=Item.objects.get(id=self.iid))
-			review.save()
-		return super(ReviewView, self).post(request, *args, **kwargs)
+	def form_valid(self, form):
+		review = form.save(commit=False)
+		review.item = Item.objects.get(id=self.kwargs['pk'])
+		return super(ReviewView, self).form_valid(form)
 
 	def get_success_url(self):
-		return reverse('catalog:detail', kwargs={'pk': self.iid})
+		return reverse('catalog:detail', kwargs={'pk': self.kwargs['pk']})
 
 
 class ItemDetail(View):
@@ -100,19 +103,18 @@ class ItemList(generic.ListView):
 	context_object_name = 'items'
 
 
-class Registration(generic.FormView):
+class Registration(generic.edit.CreateView):
 	form_class = SignupForm
 	template_name = 'catalog/registration.html'
+	model = User
 
 	def get_success_url(self):
 		return reverse('catalog:index')
 
 	def form_valid(self, form):
-		u = User.objects.create_user(username=form.cleaned_data['username'], email=form.cleaned_data['email'], password=form.cleaned_data['password'])
-		u.save()
-		#send_mail('Successful Registration', 'You are successfuly registered in our internet shop.', 'jsnk@yandex.ru', [email,], fail_silently=False)
+		u = form.save()
 		login(self.request, u)
-
+		#send_mail('Successful Registration', 'You are successfuly registered in our internet shop.', 'jsnk@yandex.ru', [email,], fail_silently=False)
 		return super(Registration, self).form_valid(form)
 
 
@@ -133,22 +135,16 @@ class SigninView(generic.FormView):
 
 		return super(SigninView, self).form_valid(form)
 
-class SignoutView(View):
-	def get(self, request):
-		logout(request)
-		return redirect(reverse('catalog:signin'))
+class SignoutView(generic.base.RedirectView):
+	def get_redirect_url(self):
+		logout(self.request)
+		return (reverse('catalog:signin'))
 
 
 class ProfileView(generic.DetailView):
 	model = User
 	template_name = 'catalog/profile.html'
 	context_object_name = 'user'
-
-	def get_context_data(self, **kwargs):
-		context = super(ProfileView, self).get_context_data(**kwargs)
-		self.object = User.objects.get(id=self.get_object().pk)
-
-		return context
 
 
 class CartView(View):
@@ -172,10 +168,10 @@ class CartView(View):
 			try:
 				order.items.get(id=request.GET['delete']).delete()
 
-			except:
+			except ObjectDoesNotExist:
 				pass
 
-			if order.items.count() == 0:
+			if not order.items.exists():
 				order = None
 				del request.session['order']
 
@@ -208,7 +204,7 @@ class OrderView(View):
 			orders = cur.fetchall()
 			cur.close()
 
-		except:
+		except DatabaseError:
 			orders = []
 
 		return render(request, 'catalog/orders.html', {'orders': orders, 'begin': begin, 'end': end, 'step': step})
