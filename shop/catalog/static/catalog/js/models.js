@@ -20,7 +20,12 @@ var ItemModel = BaseModel.extend({
     urlRoot: '/api/v1/item/',
     defaults: {
     },
-    idAttribute: '_id'
+}); 
+
+var ReviewModel = BaseModel.extend({
+    urlRoot: '/api/v1/review/',
+    defaults: {
+    },
 }); 
 
 var BaseCollection = Backbone.Collection.extend({

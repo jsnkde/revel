@@ -9,65 +9,77 @@
         {% load staticfiles %}
         <link rel="stylesheet" href="{% static 'catalog/css/style.css' %}" />
         <link rel="stylesheet" href="{% static 'catalog/css/bootstrap.css' %}" />
+        <link rel="stylesheet" href="{% static 'catalog/css/shop-item.css' %}" />
 
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
     </head>
     <body>
+
+        {% include 'catalog/js_detail.html' %}
+
         <script id="loginTemplate" type="text/template">
-            <div id='login' class="container-fluid">
-                <h2>Who are you?</h2>
-                <input type='text' id='uname'><br>
-                <input type='password' id='pword'><br>
-                <button id='submit'>Log in</button>
+            <div id='login' class="container">
+            <div class="col-xs-4">
+                <div class="input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                <input type='text' id='uname' class="form-control" placeholder="username">
+                </div>
+                <div class="input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                <input type='password' id='pword' class="form-control" placeholder="password"><br>
+                </div><br>
+                <button id='submit' type="button" class="btn btn-success btn-block">Log in</button>
+            </div>
             </div>
         </script>
 
         <script id="registerTemplate" type="text/template">
-            <div  class="container-fluid">
+            <div  class="container">
+            <div class="col-xs-4">
                 <div id='register-error'></div>
                 <div id='register'>
-                    <input type='text' id='usname'><br>
-                    <input type='email' id='email'><br>
-                    <input type='password' id='psword'><br>
-                    <button id='reg'>Register</button>
+                    <div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                    <input type='text' id='usname' class="form-control" placeholder="username">
+                    </div>
+                    <div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+                    <input type='email' id='email' class="form-control" placeholder="email">
+                    </div>
+                    <div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                    <input type='password' id='psword' class="form-control" placeholder="password">
+                    </div><br>
+                    <button id='reg' type="button" class="btn btn-success btn-block">Register</button>
                 </div>
+            </div>
             </div>
         </script>
 
         <script id="submitTemplate" type="text/template">
-            <div id='collection' class="container-fluid">
-            <h3>hello, <%= suname %></h3>
-            Key: <span id='skey'><%= skey %></span>
+            <div id='collection' class="container">
             <table class='table'>
             <thead>
                 <tr>
                     <th>Name</th>
                     <th>Price</th>
+                    <th>Rating</th>
                 </tr>
             </thead>
             <tbody>
             <% _.each(collection, function(model) { %>
                 <tr>
-                    <th><%= model.name %></th>
+                    <th><a href='#items/<%= model.id %>'><%= model.name %></a></th>
                     <th><%= model.price %> USD</th>
-                </tr>
-                <tr>
-                    <th colspan="2">
-                    <table class="table">
-                        <% _.each(model.reviews, function(review) { %>
-                        <tr>
-                            <th>Author</th><th> <%= review.name %></th>
-                        </tr><tr>
-                            <th>Date</th><th> <%= review.date %></th>
-                        </tr><tr>
-                            <th>Rating</th><th> <%= review.rating %></th>
-                        </tr><tr>
-                            <th>Text</th><th> <%= review.text %></th>                   
-                        </tr>
-                        <tr><th colspan="2"><hr></th></tr>
+                    <th>
+                        <% _.each([1, 2, 3, 4, 5], function(i){ %>
+                            <% if(i <= model.rating) { %>
+                                <span class="glyphicon glyphicon-star"/>
+                            <% } else { %>
+                                <span class="glyphicon glyphicon-star-empty"/>
+                            <% } %>
                         <% }); %>
-                    </table>
                     </th>
                 </tr>
             <% }); %>
@@ -76,10 +88,12 @@
             </div>
         </script>
 
+        <div id="navigation"></div>
         <div id="container"></div>
 
         <script type="text/javascript" src="{% static 'catalog/js/jquery.js' %}"></script>
         <script type="text/javascript" src="{% static 'catalog/js/bootstrap.js' %}"></script>
+        <script type="text/javascript" src="{% static 'catalog/js/bootstrap.min.js' %}"></script>
         <script type="text/javascript" src="{% static 'catalog/js/underscore.js' %}"></script>
         <script type="text/javascript" src="{% static 'catalog/js/backbone.js' %}"></script>
         <script type="text/javascript" src="{% static 'catalog/js/js_cookie.js' %}"></script>
