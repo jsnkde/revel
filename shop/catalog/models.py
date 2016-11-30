@@ -104,6 +104,11 @@ class CustomUser(AbstractBaseUser):
 	rank = models.CharField(max_length=100)
 
 
+class UserConfirmationHash(models.Model):
+	user = models.ForeignKey(User, on_delete=models.CASCADE)
+	hash = models.CharField(max_length=32)
+
+
 class B(models.Model):
 	name = models.CharField(max_length=10)
 

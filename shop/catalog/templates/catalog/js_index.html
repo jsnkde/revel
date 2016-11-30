@@ -21,6 +21,7 @@
         <script id="loginTemplate" type="text/template">
             <div id='login' class="container">
             <div class="col-xs-4">
+                <p class='form-control-static' id="loginError"></p>
                 <div class="input-group">
                 <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
                 <input type='text' id='uname' class="form-control" placeholder="username">
@@ -53,6 +54,14 @@
                     </div><br>
                     <button id='reg' type="button" class="btn btn-success btn-block">Register</button>
                 </div>
+            </div>
+            </div>
+        </script>
+
+        <script id="waitTemplate" type="text/template">
+            <div  class="container">
+            <div class="col-xs-4">
+                <h4>Confirmation was sent to <%= email %> </h4>
             </div>
             </div>
         </script>

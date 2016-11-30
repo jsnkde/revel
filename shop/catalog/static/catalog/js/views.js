@@ -33,6 +33,7 @@ var LoginView = Backbone.View.extend({
             },
 
             error: function(model, response, options) {
+            	$("#loginError").text("Login failed");
             	console.log("login failed");
             }
         }); 
@@ -119,7 +120,8 @@ var RegisterView = Backbone.View.extend({
 
 				success: function(response){
 					console.log("CreateUser success");
-					controller.navigate("login", true);
+					$("#register").hide();
+					$("#register-error").text("Confirmation was sent to " + data.email);
 				},
 				error: function(response){
 					console.log("CreateUser error");
@@ -128,6 +130,32 @@ var RegisterView = Backbone.View.extend({
 			});
 	}
 
+});
+
+var ConfirmationView = Backbone.View.extend({
+	render: function(id, hash){
+		var data = {
+			id: id,
+			hash: hash
+		};
+
+		this.model = new CreateUserModel({id: id});
+
+		this.model.save(data, {
+			patch: true,
+
+			success: function(response){
+				console.log("patch success");
+			},
+
+			error: function(response){
+				console.log("patch failure");
+			},
+		});
+
+		notificationService.trigger('renderNav');
+		controller.navigate("login", true);
+	}
 });
 
 var ItemDetailView = Backbone.View.extend({
@@ -206,7 +234,7 @@ var NavigationView = Backbone.View.extend({
 			username: Cookies.get('username'),
             key: Cookies.get('api_key')
 		};
-		
+
 		$(this.el).html(this.template({data: data}));
 	}
 });
@@ -217,3 +245,4 @@ iview = new ItemView();
 rview = new RegisterView();
 idview = new ItemDetailView();
 nview = new NavigationView();
+cview = new ConfirmationView();

@@ -10,10 +10,8 @@ var UserModel = BaseModel.extend({
 var CreateUserModel = BaseModel.extend({
     urlRoot: '/api/v1/create_user/',
     defaults: {
-    	'username': '',
-    	'email': '',
-    	'password': ''
-    }
+    },
+    idAttribute: "id"
 }); 
 
 var ItemModel = BaseModel.extend({
