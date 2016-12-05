@@ -227,6 +227,7 @@ var CartView = Backbone.View.extend({
 				patch: true, 
 
 				success: function(response){
+						notificationService.trigger('renderNav');
 						if(del != undefined) { self.render(); }
 					},
 
@@ -249,6 +250,7 @@ var CartView = Backbone.View.extend({
 
 			success: function(response){
 					Cookies.remove('cart');
+					notificationService.trigger('renderNav');
 					self.render();
 				},
 
@@ -402,13 +404,35 @@ var NavigationView = Backbone.View.extend({
         this.render();
     },
 
-	render: function(){
-		var data = {
+    fetchSuccess: function(model, response, options){
+    	var data = {
 			username: Cookies.get('username'),
-            key: Cookies.get('api_key')
+            cart: response.items.length
 		};
 
 		$(this.el).html(this.template({data: data}));
+    },
+
+	render: function(){
+		var self = this;
+		if(Cookies.get('cart') != undefined){
+			var current_order = new OrderModel({id: Cookies.get('cart')});
+			current_order.fetch({
+				success: function(model, response, options) {
+                	self.fetchSuccess(model, response, options);                
+	            },
+	            error: function(model, response, options) {
+	                console.log('current_order fetch failure');
+	            }
+			});
+		} else {
+			var data = {
+				username: Cookies.get('username'),
+	            cart: 0
+			};
+
+			$(this.el).html(this.template({data: data}));
+		}
 	}
 });
 
