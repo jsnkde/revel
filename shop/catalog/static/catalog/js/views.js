@@ -104,8 +104,12 @@ var ItemView = Backbone.View.extend({
 		var self = this;
 		order.fetch({
 			success: function(model, response, options){
-				var rtmp = _.template($('#random-order-template').html());
-				$("#random-order-container").html(rtmp({order_items:response.items, total_price: response.total_price, suname: Cookies.get('username'), order_id: id}));
+				if(response.done != true){
+					self.retrieve(id);
+				} else {
+					var rtmp = _.template($('#random-order-template').html());
+					$("#random-order-container").html(rtmp({order_items:response.items, total_price: response.total_price, suname: Cookies.get('username'), order_id: id}));
+				}
         	},
         	error: function(model, response, options){
         		self.retrieve(id);
