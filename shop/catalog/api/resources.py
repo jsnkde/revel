@@ -179,7 +179,6 @@ class OrderResource(ModelResource):
         return (bundle.data['created']).strftime('%H:%M %d.%m.%Y')
 
     def obj_update(self, bundle, request=None, **kwargs):
-        print bundle.data
         if bundle.data.has_key('done') and bundle.data['done'] is True:
             bundle.obj.done = True
             bundle.obj.save()
@@ -203,44 +202,16 @@ class OrderResource(ModelResource):
         return bundle
 
     def save_m2m(self, bundle):
-        print "save_m2m"
         pass
 
     def hydrate_m2m(self, bundle):
-        print "hydrate_m2m"
         pass
 
     def authorized_read_list(self, object_list, bundle):
-        return object_list.filter(done=True)
+        return object_list.filter(done=True).filter(user=bundle.request.user)
 
     def authorized_read_detail(self, object_list, bundle):
-        return object_list
-
-
-class CartResource(OrderResource):
-    class Meta:
-        resource_name = 'cart'
-        authorization = OrderAuthorization()
-        authentication = MultiAuthentication(BasicAuthentication(), ApiKeyAuthentication())
-        list_allowed_methods = ['get']
-        detail_allowed_methods = ['get', 'post', 'patch', 'put']
-        queryset = Order.objects.filter().order_by('-id').select_related()
-        always_return_data = True
-
-    def authorized_read_list(self, object_list, bundle):
-        return object_list
-
-    def authorized_read_detail(self, object_list, bundle):
-        return object_list
-
-    def obj_update(self, bundle, request=None, **kwargs):
-        if bundle.data.has_key('del'):
-            bundle.obj.items.get(id=bundle.data['del']).delete()
-
-        if not bundle.obj.items.exists():
-            pass
-
-        return bundle
+        return object_list.filter(user=bundle.request.user)
 
 
 class CommandObject(object):
