@@ -26,11 +26,27 @@ var ReviewModel = BaseModel.extend({
     },
 }); 
 
-var BaseCollection = Backbone.Collection.extend({
+var CommandModel = BaseModel.extend({
+    urlRoot: '/api/v1/command/',
+    defaults: {
+    },
+}); 
+
+var OrderModel = BaseModel.extend({
+    urlRoot: '/api/v1/order/',
+    defaults: {
+    },
 });
 
+var BaseCollection = Backbone.Collection.extend({
+});
 
 var ItemCollection = BaseCollection.extend({
     url: '/api/v1/item/',
     model: ItemModel
+});
+
+var OrderCollection = BaseCollection.extend({
+    url: '/api/v1/order/',
+    model: OrderModel
 });

@@ -45,6 +45,7 @@ var LogoutView = Backbone.View.extend({
 	render: function(){
 		Cookies.remove('username');
 		Cookies.remove('api_key');
+		Cookies.remove('cart');
 		notificationService.trigger('renderNav');
 		controller.navigate("login", true);
 	},
@@ -74,16 +75,188 @@ var ItemView = Backbone.View.extend({
             error: function(collection, response, options) {
                 console.log('item fetch failure');
             }
-		});
-				
+		});				
 	},
 
-	initialize : function () {
-        this.listenTo(notificationService, 'show', this.show);
-    },
+	events:{
+		"click #random-order": "random"
+	},
 
-    show: function () {
-    },
+	random: function(){
+		var cmd = new CommandModel();
+		var self = this;
+		Backbone.Tastypie.apiKey = {
+            username: Cookies.get('username'),
+            key: Cookies.get('api_key')
+        }; 
+        cmd.fetch({
+        	success: function(model, response, options){
+        		self.retrieve(response.objects[0].order_id);
+        	},
+        	error: function(model, response, options){
+        		console.log("random failure");
+        	}
+        });
+	},
+
+	retrieve: function(id){
+		var order = new OrderModel({id: id});
+		var self = this;
+		order.fetch({
+			success: function(model, response, options){
+				var rtmp = _.template($('#random-order-template').html());
+				$("#random-order-container").html(rtmp({order_items:response.items, total_price: response.total_price, suname: Cookies.get('username'), order_id: id}));
+        	},
+        	error: function(model, response, options){
+        		self.retrieve(id);
+        	}
+		});
+	}
+});
+
+var OrdersView = Backbone.View.extend({
+	el: $("#container"),
+
+	collection: new OrderCollection(), 
+
+	template: _.template($('#ordersTemplate').html()),
+
+	fetchSuccess: function(collection, response, options){
+		$(this.el).html(this.template({collection: this.collection.toJSON(), suname: Cookies.get('username')}));
+	},
+
+	render: function(){
+		var self = this;
+		Backbone.Tastypie.apiKey = {
+            username: Cookies.get('username'),
+            key: Cookies.get('api_key')
+        }; 
+		this.collection.fetch({
+			success: function(collection, response, options) {
+                self.fetchSuccess(collection, response, options);                
+            },
+            error: function(collection, response, options) {
+                console.log('orders fetch failure');
+            }
+		});	
+	},
+});
+
+var CartView = Backbone.View.extend({
+	el: $("#container"),
+
+	template: _.template($('#cartTemplate').html()),
+
+	fetchSuccess: function(model, response, options){
+		$(this.el).html(this.template({order: response, suname: Cookies.get('username')}));
+	},
+
+	fetchError: function(model, response, options){
+		$(this.el).html(this.template({order: undefined, suname: Cookies.get('username')}));
+	},
+
+	render: function(){        
+        if(Cookies.get('cart') == undefined){
+        	this.fetchError(undefined, undefined, undefined);
+        	return;
+        }
+
+		var self = this;
+		Backbone.Tastypie.apiKey = {
+            username: Cookies.get('username'),
+            key: Cookies.get('api_key')
+        }; 
+
+        this.model = new OrderModel({id: Cookies.get('cart')});
+		this.model.fetch({
+			success: function(model, response, options) {
+                self.fetchSuccess(model, response, options);                
+            },
+            error: function(model, response, options) {
+                self.fetchError(model, response, options);  
+            }
+		});	
+	},
+
+	events:{
+		"click .btn.del": "action",
+		"click .btn.add": "action",
+		"click .btn.done": "close"
+	},
+
+	action: function(ev){
+		var del = $(ev.currentTarget).data('del');
+		var add = $(ev.currentTarget).data('add');
+
+		var data = {
+			add: add,
+			del: del
+		};
+
+		var self = this;
+		Backbone.Tastypie.apiKey = {
+            username: Cookies.get('username'),
+            key: Cookies.get('api_key')
+        }; 
+
+        if(Cookies.get('cart') == undefined){  
+        	this.model = undefined;
+        	new_order = new OrderModel();
+        	new_order.save({}, {
+        		success: function(response){
+        			Cookies.set('cart', response.attributes.id)
+        			self.action(ev);
+
+        		},
+        		error: function(response){
+        			console.log("error: " + response);
+        		}
+        	});
+        } else if(this.model == undefined) {
+        	this.model = new OrderModel({id: Cookies.get('cart')});
+        	this.model.fetch({
+        		success: function(model, response, options) {
+	                self.action(ev);              
+	            },
+	            error: function(model, response, options) {
+	                console.log("fetch cart failed");
+	            }
+        	});
+        } else {
+			this.model.save(data, {
+				patch: true, 
+
+				success: function(response){
+						if(del != undefined) { self.render(); }
+					},
+
+				error: function(response){
+						console.log("cart error");
+					}
+			});
+		}
+	}, 
+
+	close: function(){
+		if(this.model == undefined){
+			return;
+		}
+
+		var self = this;
+
+		this.model.save({done: true}, {
+			patch: true, 
+
+			success: function(response){
+					Cookies.remove('cart');
+					self.render();
+				},
+
+			error: function(response){
+					console.log("close error");
+				}
+		});
+	}
 });
 
 var RegisterView = Backbone.View.extend({
@@ -239,10 +412,12 @@ var NavigationView = Backbone.View.extend({
 	}
 });
 
-lview = new LoginView();
-oview = new LogoutView();
-iview = new ItemView();
-rview = new RegisterView();
-idview = new ItemDetailView();
-nview = new NavigationView();
-cview = new ConfirmationView();
+login_view = new LoginView();
+logout_view = new LogoutView();
+items_view = new ItemView();
+registration_view = new RegisterView();
+item_view = new ItemDetailView();
+navigation_view = new NavigationView();
+confirmation_view = new ConfirmationView();
+orders_view = new OrdersView();
+cart_view = new CartView();

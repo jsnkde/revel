@@ -66,22 +66,47 @@
             </div>
         </script>
 
+        <script type="text/template" id="random-order-template">
+            <% if(!_.isUndefined(order_items)) { %>
+            <div class="table-responsive col-md-6">
+                <table class='table'>
+                <caption>Random order for <%= suname %>, order ID: <%= order_id %></caption>
+                <thead class="thead">
+                <tr>
+                    <th>Total</th>
+                    <th><span class='pull-right'>$<%= total_price%></span></th>
+                </tr>
+                </thead>
+                <tbody>
+                <% _.each(order_items, function(order_item) { %>
+                    <tr>
+                        <td><%= order_item.name %></td>
+                        <td><span class='pull-right'>$<%= order_item.price %></span></td>
+                    </tr>
+                <% }); %>
+                </tbody>
+                </table>
+            </div>
+            <% } %>
+        </script>
+
         <script id="submitTemplate" type="text/template">
             <div id='collection' class="container">
-            <table class='table'>
+            <table class='table table'>
             <thead>
                 <tr>
                     <th>Name</th>
                     <th>Price</th>
                     <th>Rating</th>
+                    <th>&nbsp;</th>
                 </tr>
             </thead>
             <tbody>
             <% _.each(collection, function(model) { %>
                 <tr>
-                    <th><a href='#items/<%= model.id %>'><%= model.name %></a></th>
-                    <th><%= model.price %> USD</th>
-                    <th>
+                    <td><a href='#items/<%= model.id %>'><%= model.name %></a></td>
+                    <td>$<%= model.price %></td>
+                    <td>
                         <% _.each([1, 2, 3, 4, 5], function(i){ %>
                             <% if(i <= model.rating) { %>
                                 <span class="glyphicon glyphicon-star"/>
@@ -89,11 +114,100 @@
                                 <span class="glyphicon glyphicon-star-empty"/>
                             <% } %>
                         <% }); %>
-                    </th>
+                    </td>
+                    <td>
+                        <% if(!_.isUndefined(suname)) { %>
+                        <button type='button' class='btn btn-default btn-xs add' data-add="<%= model.id %>">Add to cart</button>
+                        <% } %>
+                    </td>
                 </tr>
             <% }); %>
             </tbody>
             </table>
+            <div>
+                <% if(!_.isUndefined(suname)) { %>
+                <button class="btn btn-success" type="button" id="random-order">Generate random order</button>
+                <% } %>
+                <div id='random-order-container'>
+                
+                </div>
+            </div>
+            </div>
+        </script>
+
+        <script id="ordersTemplate" type="text/template">
+            <div class="container">
+            <div class=" col-sm-8">
+                <table class="table table-hover">
+                <caption>Closed orders for <%= suname %></caption>
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Date</th>
+                        <th><span class="pull-right">Total</span></th>
+                    </tr>
+                </thead>
+                <% _.each(collection, function(order) { %>                    
+                <tbody>
+                    <tr data-toggle="collapse" data-target="#accordion<%= order.id %>" class="clickable">
+                        <td><%= order.id %></td>
+                        <td><%= order.created %></td>
+                        <td><span class="pull-right">$<%= order.total_price %></span></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            <div id="accordion<%= order.id %>" class="collapse">
+                                <table class="table">
+                                    <% _.each(order.items, function(item){ %>
+                                    <tr>
+                                        <td><a href='#items/<%= item.id %>'><%= item.name %></a></td>
+                                        <td><span class="pull-right">$<%= item.price %></span></td>
+                                    </tr>
+                                    <% }); %>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+                <% }); %>
+                </table>
+            </div>
+            </div>
+        </script>
+
+        <script id="cartTemplate" type="text/template">
+            <div class="container">
+            <div class=" col-sm-8">
+            <% if(_.isUndefined(order) || _.size(order.items) == 0){ %>
+            <h4>No items in the cart</h4>
+            <% } else { %>
+                <table class="table table">
+                <caption>Shopping cart for <%= suname %>, order ID: <%= order.id %></caption>                 
+                <tbody>
+                        <% _.each(order.items, function(item){ %>
+                        <tr>
+                            <td><a href='#items/<%= item.id %>'><%= item.name %></a></td>
+                            <td><span class="pull-right">$<%= item.price %></span></td>
+                            <td><button type='button' class='btn btn-default btn-xs del' data-del="<%= item.oid %>">Remove</button></td>
+                        </tr>
+                        <% }); %>
+                                
+                </tbody>
+                <thead>
+                    <tr>
+                        <th>Total</th>
+                        <th><span class="pull-right">$<%= order.total_price %></span></th>
+                        <th>&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="3"><button type='button' class='btn btn-success done'>Close the order</button></td>
+                    </tr>
+                <tbody>
+                </table>
+            <%} %>
+            </div>
             </div>
         </script>
 

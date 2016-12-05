@@ -7,43 +7,57 @@ var Controller = Backbone.Router.extend({
 		"items/:id": "item_detail",
 		"reg": "reg",
 		"confirm?id=:id&hash=:hash": "confirm",
+		"orders": "orders",
+		"cart": "cart"
 	},
 
 	login: function(){
-		if(lview != null){
-			lview.render();
+		if(login_view != null){
+			login_view.render();
 		}
 	},
 
 	logout: function(){
-		if(oview != null){
-			oview.render();
+		if(logout_view != null){
+			logout_view.render();
 		}
 	},
 
 	items: function(){
-		if(iview != null){
-			iview.render();
+		if(items_view != null){
+			items_view.render();
 		}
 	},
 
 	item_detail: function(id){
-		if(idview != null){
-			idview.render(id);
+		if(item_view != null){
+			item_view.render(id);
 		}
 	},
 
 	reg: function(){
-		if(rview != null){
-			rview.render();
+		if(registration_view != null){
+			registration_view.render();
 		}
 	},
 
 	confirm: function(id, hash){
-		if(cview != null){
-			cview.render(id, hash);
+		if(confirmation_view != null){
+			confirmation_view.render(id, hash);
 		}
-	}
+	},
+
+	orders: function(){
+		if(orders_view != null){
+			orders_view.render();
+		}
+	},
+
+	cart: function(){
+		if(cart_view != null){
+			cart_view.render();
+		}
+	},
 });
 
 var controller = new Controller();
