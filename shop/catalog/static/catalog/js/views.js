@@ -143,7 +143,7 @@ var OrdersView = Backbone.View.extend({
                 console.log('orders fetch failure');
             }
 		});	
-	},
+	}
 });
 
 var CartView = Backbone.View.extend({

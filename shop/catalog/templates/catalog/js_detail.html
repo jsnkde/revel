@@ -17,7 +17,7 @@
                 <ul class="nav navbar-nav">
                     <% if(!_.isUndefined(data.username)) { %>
                     <li><a><span class="glyphicon glyphicon-user"></span> <%= data.username %></a></li>
-                    <li><a href="#cart"><span class="glyphicon glyphicon-shopping-cart"></span> Cart(<%= data.cart %>) </a></li>
+                    <li><a href="#cart"><span class="glyphicon glyphicon-shopping-cart"></span> Cart<sup><%= data.cart %></sup></a></li>
                     <li><a href="#orders"><span class="glyphicon glyphicon-credit-card"></span> Orders</a></li>
                     <li><a href="#logout" id="nav-logout">Log out <span class="glyphicon glyphicon-log-out"></span></a></li>
                     <% } else { %>
@@ -55,7 +55,7 @@
                     <div class="caption-full">
                         <h4 class="pull-right">$<%= model.price %></h4>                        
                         <h4><%= model.name %></h4>
-                        <h4>
+                        <h4 class="">
                             <% if(!_.isUndefined(username)) { %>
                                 <button type='button' class='btn btn-success add' data-add="<%= model.id %>">Add to cart</button>
                             <% } %>
