@@ -28,7 +28,7 @@ class RevelAuthorization(DjangoAuthorization):
 
 class UserResource(ModelResource):
     class Meta:
-        queryset = User.objects.all()
+        queryset = User.objects.all().select_related()
         resource_name = 'user'
         fields = ['username',]
         authentication = MultiAuthentication(BasicAuthentication(), ApiKeyAuthentication())
@@ -87,7 +87,7 @@ class ReviewResource(ModelResource):
     #item = fields.ForeignKey('catalog.ItemResource', 'item')
 
     class Meta:
-        queryset = Review.objects.all()
+        queryset = Review.objects.all().select_related()
         resource_name = 'review'
         allowed_methods = ['get', 'post']
         filtering = {'name': ALL, 'rating': ALL, }
@@ -112,7 +112,7 @@ class ItemResource(ModelResource):
     reviews = fields.ToManyField(ReviewResource, 'review_set', full=True)
 
     class Meta:
-        queryset = Item.objects.all().order_by('name')
+        queryset = Item.objects.all().prefetch_related().order_by('name')
         allowed_methods = ['get']
         resource_name = 'item'
         authentication = Authentication()
@@ -165,7 +165,7 @@ class OrderResource(ModelResource):
         authentication = MultiAuthentication(BasicAuthentication(), ApiKeyAuthentication())
         list_allowed_methods = ['get', 'post']
         detail_allowed_methods = ['get', 'post', 'patch', 'put']
-        queryset = Order.objects.all().order_by('-id').select_related()
+        queryset = Order.objects.all().order_by('-id').select_related().prefetch_related()
         always_return_data = True
 
     def dehydrate(self, bundle):
