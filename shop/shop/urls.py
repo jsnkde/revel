@@ -19,17 +19,21 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls.static import static
 from django.conf import settings
 from tastypie.api import Api
-from catalog.api.resources import ItemResource, ReviewResource, UserResource
+from catalog.api.resources import ItemResource, ReviewResource, UserResource, CreateUserResource, CommandResource, OrderResource
 
 
 v1_api = Api(api_name='v1')
 v1_api.register(ItemResource())
 v1_api.register(ReviewResource())
 v1_api.register(UserResource())
+v1_api.register(CreateUserResource())
+v1_api.register(CommandResource())
+v1_api.register(OrderResource())
 
 urlpatterns = [
 	url(r'^', include('catalog.urls')),
     url(r'^admin/', admin.site.urls),
+    url(r'^django-rq/', include('django_rq.urls')),
     #url(r'^grappelli/', include('grappelli.urls')), # grappelli URLS
     url(r'^api/', include(v1_api.urls)),
     url(r'api/doc/', include('tastypie_swagger.urls', namespace='myapi_tastypie_swagger'),

@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand, CommandError
 from catalog.models import Currency, Item, Category
 import string
 import random
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class Command(BaseCommand):
@@ -17,7 +18,7 @@ class Command(BaseCommand):
 			cur = Currency.objects.get(name="Dollar")
 			cat = Category.objects.get(name="Smartphone")
 
-		except DoesNotExists:
+		except ObjectDoesNotExist:
 			return
 
 		bulk_list = []

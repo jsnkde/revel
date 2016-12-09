@@ -6,7 +6,8 @@ from . import views
 app_name = 'catalog'
 
 urlpatterns = [
-    url(r'^$', views.ItemList.as_view(), name='index'),
+	url(r'^$', views.JSView.as_view(), name='js'),
+    url(r'^index', views.ItemList.as_view(), name='index'),
     url(r'^login$', views.SigninView.as_view(), name='signin'),
     url(r'^logout$', views.SignoutView.as_view(), name='signout'),
     url(r'^user/(?P<pk>[0-9]+)$', views.ProfileView.as_view(), name='profile'),

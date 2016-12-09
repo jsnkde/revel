@@ -46,6 +46,20 @@ class Accessory(ValueItem):
 	pass
 
 
+class RatedItem(models.Model):
+	name = models.CharField(max_length=100, primary_key=True)		
+	price = models.DecimalField(default=0, max_digits=10, decimal_places=2)
+	ticker = models.CharField(max_length=4)
+	avg_rating = models.IntegerField(default=0)
+
+	class Meta:
+		managed = False
+		db_table = 'rated_item'
+
+	def __unicode__(self):
+		return "%s: %d %s" % (self.name, self.price, self.ticker)
+
+
 class Item(ValueItem):
 	description = models.CharField(max_length=1000, blank=True)
 	image = models.ImageField(null=True, blank=True)
@@ -88,6 +102,11 @@ class Order(AbstractClass):
 
 class CustomUser(AbstractBaseUser):
 	rank = models.CharField(max_length=100)
+
+
+class UserConfirmationHash(models.Model):
+	user = models.ForeignKey(User, on_delete=models.CASCADE)
+	hash = models.CharField(max_length=32)
 
 
 class B(models.Model):
